@@ -811,3 +811,102 @@ h4 {
     max-height: 300px;
     object-fit: contain;
 }
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 1000;
+    padding: 8px 12px;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+}
+
+    .skip-link:focus {
+        left: 12px;
+        top: 12px;
+    }
+
+.nav a[aria-current="page"] {
+    font-weight: 700;
+}
+
+[role="button"],
+[role="tab"] {
+    cursor: pointer;
+}
+
+.news-article {
+    display: none;
+}
+
+    .news-article:target,
+    .news-article.is-default {
+        display: block;
+    }
+
+        .news-article:target ~ .is-default {
+            display: none;
+        }
+
+@media (max-width: 900px) {
+    .header.wrap {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+        gap: 10px 14px;
+    }
+
+    .hero,
+    .store-body,
+    .news-grid,
+    .rewards-grid,
+    .guide-layout,
+    .news-wide {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+        .hero-players img,
+        .store-preview img,
+        .reward-card img,
+        .guide-player,
+        .news-wide img,
+        .article-cover {
+            width: 100%;
+            height: auto;
+        }
+}
+
+@media (max-width: 600px) {
+    .logo span {
+        display: none;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

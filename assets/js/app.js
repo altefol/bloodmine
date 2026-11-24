@@ -58,4 +58,167 @@ function toggleRule(element){
   element.querySelector('b').textContent=rule.classList.contains('open')?'−':'+';
 }
 renderProducts();
-document.getElementById('dialog').addEventListener('click',function(event){if(event.target===this)closeDialog();});
+document.getElementById('dialog').addEventListener('click', function (event) { if (event.target === this) closeDialog(); });
+
+(function () {
+    const dialog = document.getElementById("dialog");
+    const dialogTitle = document.getElementById("dialog-title");
+    const dialogText = document.getElementById("dialog-text");
+
+    function hasFunction(name) {
+        return typeof window[name] === "function";
+    }
+
+    function openInfo(title, text) {
+        if (!dialog) return;
+
+        if (dialogTitle) dialogTitle.textContent = title || "Информация";
+        if (dialogText) dialogText.textContent = text || "";
+
+        dialog.classList.add("open");
+        dialog.style.display = "flex";
+
+        const firstButton = dialog.querySelector("[data-close-dialog]");
+        if (firstButton) firstButton.focus();
+    }
+
+    function closeInfo() {
+        if (!dialog) return;
+
+        dialog.classList.remove("open");
+        dialog.style.display = "none";
+    }
+
+    document.addEventListener("click", function (event) {
+        const tab = event.target.closest("[data-category]");
+        if (tab) {
+            const container = tab.closest("[role='tablist']") || document;
+
+            container.querySelectorAll("[data-category]").forEach(function (item) {
+                item.classList.remove("active");
+                item.setAttribute("aria-selected", "false");
+            });
+
+            tab.classList.add("active");
+            tab.setAttribute("aria-selected", "true");
+
+            if (hasFunction("setCategory")) {
+                setCategory(tab.dataset.category);
+            }
+
+            return;
+        }
+
+        const term = event.target.closest("[data-term]");
+        if (term) {
+            const group = term.closest(".terms") || document;
+
+            group.querySelectorAll("[data-term]").forEach(function (item) {
+                item.classList.remove("selected");
+            });
+
+            term.classList.add("selected");
+
+            if (hasFunction("setTerm")) {
+                setTerm(term, term.dataset.term);
+            }
+
+            return;
+        }
+
+        const selectProductButton = event.target.closest("[data-select-product]");
+        if (selectProductButton) {
+            if (hasFunction("selectProduct")) {
+                selectProduct();
+            } else {
+                openInfo(
+                    "Демонстрация",
+                    "Это демо-версия сайта. Оплата и выдача товаров отключены."
+                );
+            }
+
+            return;
+        }
+
+        const rewardButton = event.target.closest("[data-reward]");
+        if (rewardButton) {
+            const rewardName = rewardButton.dataset.reward;
+
+            if (hasFunction("showReward")) {
+                showReward(rewardName);
+            } else {
+                openInfo(
+                    rewardName,
+                    "Это демонстрационная награда. Подробное описание будет доступно в реальной версии проекта."
+                );
+            }
+
+            return;
+        }
+
+        const toggle = event.target.closest("[data-toggle-rule]");
+        if (toggle) {
+            if (hasFunction("toggleRule")) {
+                toggleRule(toggle);
+            } else {
+                const content = toggle.parentElement.querySelector(".rule-content");
+                const marker = toggle.querySelector("b");
+
+                if (content) {
+                    const isVisible =
+                        !content.hasAttribute("hidden") &&
+                        window.getComputedStyle(content).display !== "none";
+
+                    if (isVisible) {
+                        content.setAttribute("hidden", "");
+                        content.style.display = "none";
+                        toggle.setAttribute("aria-expanded", "false");
+
+                        if (marker) marker.textContent = "+";
+                    } else {
+                        content.removeAttribute("hidden");
+                        content.style.display = "block";
+                        toggle.setAttribute("aria-expanded", "true");
+
+                        if (marker) marker.textContent = "−";
+                    }
+                }
+            }
+
+            return;
+        }
+
+        const closeButton = event.target.closest("[data-close-dialog]");
+        if (closeButton) {
+            if (hasFunction("closeDialog")) {
+                closeDialog();
+            } else {
+                closeInfo();
+            }
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            const interactive = event.target.closest("[role='button'], [role='tab']");
+
+            if (interactive) {
+                event.preventDefault();
+                interactive.click();
+            }
+        }
+
+        if (event.key === "Escape") {
+            if (
+                dialog &&
+                window.getComputedStyle(dialog).display !== "none"
+            ) {
+                if (hasFunction("closeDialog")) {
+                    closeDialog();
+                } else {
+                    closeInfo();
+                }
+            }
+        }
+    });
+})();
