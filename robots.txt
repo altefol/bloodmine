@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://altefol.github.io/bloodmine/sitemap.xml
