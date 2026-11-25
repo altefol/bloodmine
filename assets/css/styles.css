@@ -811,11 +811,13 @@ h4 {
     max-height: 300px;
     object-fit: contain;
 }
+/* =========================================================
+   Практическая 17: адаптив + доступность
+   Вставлять ПОСЛЕ всех существующих стилей.
+   На десктопе (>1100px) внешний вид не меняется.
+   ========================================================= */
 
-img {
-    max-width: 100%;
-    height: auto;
-}
+/* --- Базовые утилиты (работают на всех размерах) --- */
 
 .visually-hidden {
     position: absolute;
@@ -833,27 +835,55 @@ img {
     position: absolute;
     left: -9999px;
     top: 0;
-    z-index: 1000;
-    padding: 8px 12px;
-    background: #111;
-    color: #fff;
+    z-index: 100;
+    padding: 8px 14px;
+    background: #ff8b0b;
+    color: #1e1006;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 0 0 8px 0;
     text-decoration: none;
 }
 
     .skip-link:focus {
-        left: 12px;
-        top: 12px;
+        left: 0;
+        top: 0;
     }
 
+/* Подсветка текущей страницы в навигации */
 .nav a[aria-current="page"] {
-    font-weight: 700;
+    background: #ffffff20;
+    font-weight: bold;
 }
 
-[role="button"],
-[role="tab"] {
-    cursor: pointer;
+/* Состояние загрузки в магазине */
+.loading-state {
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #8a7464;
 }
 
+/* Чек-лист на how-to-play */
+.guide-checklist {
+    margin: 30px 0;
+    padding: 25px;
+    background: #2b180c;
+    border-radius: 12px;
+}
+
+    .guide-checklist h4 {
+        margin: 0 0 10px;
+    }
+
+    .guide-checklist ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 12px;
+        color: #a88c76;
+        line-height: 1.8;
+    }
+
+/* article.html: показываем только нужную новость по якорю */
 .news-article {
     display: none;
 }
@@ -867,46 +897,280 @@ img {
             display: none;
         }
 
+/* --- Адаптив: планшет / небольшой десктоп --- */
+
+@media (max-width: 1100px) {
+    body {
+        min-width: auto;
+    }
+
+    .wrap {
+        width: calc(100% - 40px);
+        max-width: 1040px;
+    }
+
+    .store {
+        width: 100%;
+    }
+
+    .tabs {
+        margin-left: 0;
+    }
+
+    .inner-page {
+        padding: 15px 25px 55px;
+        min-height: auto;
+    }
+
+    .rules-intro,
+    .rules-list,
+    .bottom-help {
+        width: 100%;
+    }
+
+    .article-page {
+        width: 100%;
+    }
+
+    .article-cover {
+        width: 100%;
+    }
+
+    .article-body {
+        width: 100%;
+    }
+
+        .article-body img {
+            width: 100%;
+        }
+
+    .guide-steps {
+        width: 100%;
+    }
+
+    .modal {
+        width: calc(100% - 32px);
+        max-width: 470px;
+    }
+}
+
+/* --- Адаптив: мобильные / узкие планшеты --- */
+
 @media (max-width: 900px) {
-    .header.wrap {
+    /* Шапка */
+    .header {
+        height: auto;
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
+        padding: 14px 0;
     }
 
     .nav {
         flex-wrap: wrap;
-        gap: 10px 14px;
+        gap: 4px;
     }
 
-    .hero,
-    .store-body,
-    .news-grid,
-    .rewards-grid,
-    .guide-layout,
-    .news-wide {
-        display: grid;
-        grid-template-columns: 1fr;
+    .header-note {
+        display: none;
     }
 
-        .hero-players img,
-        .store-preview img,
-        .reward-card img,
-        .guide-player,
-        .news-wide img,
-        .article-cover {
+    /* Hero */
+    .hero {
+        height: auto;
+        flex-direction: column;
+        padding: 20px 0 30px;
+    }
+
+    .hero-copy {
+        width: 100%;
+    }
+
+    .hero h2 {
+        font-size: 30px;
+    }
+
+    .hero p {
+        width: 100%;
+    }
+
+    .hero-button {
+        width: 100%;
+        max-width: 345px;
+    }
+
+        .hero-button span {
+            margin-left: 20px;
+        }
+
+    .hero-players {
+        position: static;
+        width: 100%;
+        height: auto;
+        margin-top: 20px;
+    }
+
+        .hero-players img {
+            position: static;
             width: 100%;
             height: auto;
         }
+
+    .hero-back {
+        height: auto;
+        max-height: 260px;
+        object-fit: cover;
+    }
+
+    .hero-front {
+        height: auto;
+        max-height: 280px;
+        object-fit: contain;
+        margin-top: -40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Магазин */
+    .store-body {
+        flex-direction: column;
+    }
+
+    .store-preview {
+        width: 100%;
+    }
+
+        .store-preview img {
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+    .product-column,
+    .description-column {
+        width: 100%;
+    }
+
+        .description-column .orange {
+            width: 100%;
+        }
+
+    /* Новости */
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* О нас */
+    .about {
+        padding: 20px;
+    }
+
+    /* Футер */
+    .footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .footer-links {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Награды */
+    .rewards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .reward-card img {
+        width: 120px;
+    }
+
+    .reward-banner {
+        flex-direction: column;
+        padding: 20px 25px;
+        text-align: center;
+    }
+
+        .reward-banner img {
+            width: 120px;
+        }
+
+    /* Руководство */
+    .guide-layout {
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .guide-player {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    /* Широкий баннер новостей */
+    .news-wide {
+        flex-direction: column;
+        padding: 20px;
+        text-align: center;
+    }
+
+        .news-wide img,
+        .news-wide > img {
+            width: 100%;
+            max-width: 360px;
+            max-height: none;
+        }
+
+    /* Статья */
+    .article-bottom {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Тост */
+    .toast {
+        left: 16px;
+        right: 16px;
+        text-align: center;
+    }
 }
+
+/* --- Адаптив: совсем узкие экраны --- */
 
 @media (max-width: 600px) {
     .logo span {
         display: none;
     }
 
-    .tabs {
-        overflow-x: auto;
-        white-space: nowrap;
+    .logo {
+        font-size: 36px;
+        letter-spacing: -4px;
     }
+
+    .hero h2 {
+        font-size: 26px;
+    }
+
+    .section-title h2 {
+        font-size: 24px;
+    }
+
+    .rewards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nav a {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .modal {
+        padding: 25px;
+    }
+
+        .modal h2 {
+            font-size: 22px;
+        }
 }

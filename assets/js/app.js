@@ -60,164 +60,166 @@ function toggleRule(element){
 renderProducts();
 document.getElementById('dialog').addEventListener('click', function (event) { if (event.target === this) closeDialog(); });
 
-(function () {
-    const dialog = document.getElementById("dialog");
-    const dialogTitle = document.getElementById("dialog-title");
-    const dialogText = document.getElementById("dialog-text");
+/* =========================================================
+   Практическая 17: JS-исправления
+   Вставлять в конец app.js
+   ========================================================= */
 
-    function hasFunction(name) {
+(function () {
+    var dialog = document.getElementById("dialog");
+    var lastFocused = null;
+
+    function dialogIsOpen() {
+        return dialog && dialog.classList.contains("visible");
+    }
+
+    function openDialog(title, text) {
+        if (!dialog) return;
+        lastFocused = document.activeElement;
+
+        var t = document.getElementById("dialog-title");
+        var p = document.getElementById("dialog-text");
+        if (t) t.textContent = title || "Информация";
+        if (p) p.textContent = text || "";
+
+        dialog.classList.add("visible");
+
+        var btn = dialog.querySelector("[data-close-dialog]");
+        if (btn) btn.focus();
+    }
+
+    function closeDialog() {
+        if (!dialog) return;
+        dialog.classList.remove("visible");
+        if (lastFocused && lastFocused.focus) lastFocused.focus();
+        lastFocused = null;
+    }
+
+    // Делаем функции глобальными, если их ещё нет
+    if (typeof window.closeDialog !== "function") {
+        window.closeDialog = closeDialog;
+    }
+    if (typeof window.openDialog !== "function") {
+        window.openDialog = openDialog;
+    }
+
+    function toggleRule(heading) {
+        var rule = heading.closest(".rule");
+        if (!rule) return;
+
+        var isOpen = rule.classList.contains("open");
+        rule.classList.toggle("open", !isOpen);
+        heading.setAttribute("aria-expanded", String(!isOpen));
+
+        var marker = heading.querySelector("b");
+        if (marker) marker.textContent = isOpen ? "+" : "\u2212";
+    }
+
+    if (typeof window.toggleRule !== "function") {
+        window.toggleRule = toggleRule;
+    }
+
+    function hasFn(name) {
         return typeof window[name] === "function";
     }
 
-    function openInfo(title, text) {
-        if (!dialog) return;
-
-        if (dialogTitle) dialogTitle.textContent = title || "Информация";
-        if (dialogText) dialogText.textContent = text || "";
-
-        dialog.classList.add("open");
-        dialog.style.display = "flex";
-
-        const firstButton = dialog.querySelector("[data-close-dialog]");
-        if (firstButton) firstButton.focus();
-    }
-
-    function closeInfo() {
-        if (!dialog) return;
-
-        dialog.classList.remove("open");
-        dialog.style.display = "none";
-    }
-
-    document.addEventListener("click", function (event) {
-        const tab = event.target.closest("[data-category]");
+    // Делегирование кликов
+    document.addEventListener("click", function (e) {
+        // Вкладки магазина
+        var tab = e.target.closest("[data-category]");
         if (tab) {
-            const container = tab.closest("[role='tablist']") || document;
-
-            container.querySelectorAll("[data-category]").forEach(function (item) {
-                item.classList.remove("active");
-                item.setAttribute("aria-selected", "false");
+            var list = tab.closest("[role='tablist']") || document;
+            list.querySelectorAll("[data-category]").forEach(function (el) {
+                el.classList.remove("active");
+                el.setAttribute("aria-selected", "false");
             });
-
             tab.classList.add("active");
             tab.setAttribute("aria-selected", "true");
-
-            if (hasFunction("setCategory")) {
-                setCategory(tab.dataset.category);
-            }
-
+            if (hasFn("setCategory")) setCategory(tab.dataset.category);
             return;
         }
 
-        const term = event.target.closest("[data-term]");
+        // Срок действия
+        var term = e.target.closest("[data-term]");
         if (term) {
-            const group = term.closest(".terms") || document;
-
-            group.querySelectorAll("[data-term]").forEach(function (item) {
-                item.classList.remove("selected");
+            var group = term.closest(".terms") || document;
+            group.querySelectorAll("[data-term]").forEach(function (el) {
+                el.classList.remove("selected");
             });
-
             term.classList.add("selected");
-
-            if (hasFunction("setTerm")) {
-                setTerm(term, term.dataset.term);
-            }
-
+            if (hasFn("setTerm")) setTerm(term, term.dataset.term);
             return;
         }
 
-        const selectProductButton = event.target.closest("[data-select-product]");
-        if (selectProductButton) {
-            if (hasFunction("selectProduct")) {
+        // Выбрать товар
+        if (e.target.closest("[data-select-product]")) {
+            if (hasFn("selectProduct")) {
                 selectProduct();
             } else {
-                openInfo(
-                    "Демонстрация",
-                    "Это демо-версия сайта. Оплата и выдача товаров отключены."
-                );
+                openDialog("Демонстрация", "Это демо-версия сайта. Оплата и выдача товаров отключены.");
             }
-
             return;
         }
 
-        const rewardButton = event.target.closest("[data-reward]");
-        if (rewardButton) {
-            const rewardName = rewardButton.dataset.reward;
-
-            if (hasFunction("showReward")) {
-                showReward(rewardName);
+        // Награды
+        var reward = e.target.closest("[data-reward]");
+        if (reward) {
+            var name = reward.dataset.reward;
+            if (hasFn("showReward")) {
+                showReward(name);
             } else {
-                openInfo(
-                    rewardName,
-                    "Это демонстрационная награда. Подробное описание будет доступно в реальной версии проекта."
-                );
+                openDialog(name, "Это демонстрационная награда. Подробное описание будет доступно в реальной версии проекта.");
             }
-
             return;
         }
 
-        const toggle = event.target.closest("[data-toggle-rule]");
+        // Аккордеоны
+        var toggle = e.target.closest("[data-toggle-rule]");
         if (toggle) {
-            if (hasFunction("toggleRule")) {
-                toggleRule(toggle);
-            } else {
-                const content = toggle.parentElement.querySelector(".rule-content");
-                const marker = toggle.querySelector("b");
-
-                if (content) {
-                    const isVisible =
-                        !content.hasAttribute("hidden") &&
-                        window.getComputedStyle(content).display !== "none";
-
-                    if (isVisible) {
-                        content.setAttribute("hidden", "");
-                        content.style.display = "none";
-                        toggle.setAttribute("aria-expanded", "false");
-
-                        if (marker) marker.textContent = "+";
-                    } else {
-                        content.removeAttribute("hidden");
-                        content.style.display = "block";
-                        toggle.setAttribute("aria-expanded", "true");
-
-                        if (marker) marker.textContent = "−";
-                    }
-                }
-            }
-
+            toggleRule(toggle);
             return;
         }
 
-        const closeButton = event.target.closest("[data-close-dialog]");
-        if (closeButton) {
-            if (hasFunction("closeDialog")) {
-                closeDialog();
-            } else {
-                closeInfo();
-            }
+        // Закрытие модалки
+        if (e.target.closest("[data-close-dialog]")) {
+            closeDialog();
         }
     });
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-            const interactive = event.target.closest("[role='button'], [role='tab']");
-
-            if (interactive) {
-                event.preventDefault();
-                interactive.click();
+    // Клавиатура
+    document.addEventListener("keydown", function (e) {
+        // Enter / Space для role=button и role=tab
+        if (e.key === "Enter" || e.key === " ") {
+            var el = e.target.closest("[role='button'], [role='tab']");
+            if (el) {
+                e.preventDefault();
+                el.click();
             }
         }
 
-        if (event.key === "Escape") {
-            if (
-                dialog &&
-                window.getComputedStyle(dialog).display !== "none"
-            ) {
-                if (hasFunction("closeDialog")) {
-                    closeDialog();
-                } else {
-                    closeInfo();
-                }
+        // Escape закрывает модалку
+        if (e.key === "Escape" && dialogIsOpen()) {
+            closeDialog();
+        }
+
+        // Focus trap
+        if (e.key === "Tab" && dialogIsOpen()) {
+            var items = Array.from(
+                dialog.querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])")
+            ).filter(function (el) {
+                return !el.disabled && el.offsetParent !== null;
+            });
+            if (!items.length) return;
+
+            var first = items[0];
+            var last = items[items.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
             }
         }
     });
