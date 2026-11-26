@@ -813,11 +813,8 @@ h4 {
 }
 /* =========================================================
    Практическая 17: адаптив + доступность
-   Вставлять ПОСЛЕ всех существующих стилей.
-   На десктопе (>1100px) внешний вид не меняется.
+   Десктоп (>1100px) НЕ трогает — вид как в исходнике.
    ========================================================= */
-
-/* --- Базовые утилиты (работают на всех размерах) --- */
 
 .visually-hidden {
     position: absolute;
@@ -850,13 +847,13 @@ h4 {
         top: 0;
     }
 
-/* Подсветка текущей страницы в навигации */
+/* Визуальная отметка текущей страницы (требование документа) */
 .nav a[aria-current="page"] {
     background: #ffffff20;
     font-weight: bold;
 }
 
-/* Состояние загрузки в магазине */
+/* Пустое состояние магазина */
 .loading-state {
     padding: 10px 12px;
     font-size: 12px;
@@ -883,7 +880,7 @@ h4 {
         line-height: 1.8;
     }
 
-/* article.html: показываем только нужную новость по якорю */
+/* article.html: одна новость по якорю (фикс «парадокса Рима») */
 .news-article {
     display: none;
 }
@@ -897,8 +894,7 @@ h4 {
             display: none;
         }
 
-/* --- Адаптив: планшет / небольшой десктоп --- */
-
+/* ---------- Планшет / небольшой десктоп ---------- */
 @media (max-width: 1100px) {
     body {
         min-width: auto;
@@ -907,6 +903,12 @@ h4 {
     .wrap {
         width: calc(100% - 40px);
         max-width: 1040px;
+    }
+
+    /* Только здесь картинки вписываются и сохраняют натуральные пропорции */
+    img {
+        max-width: 100%;
+        height: auto;
     }
 
     .store {
@@ -928,21 +930,12 @@ h4 {
         width: 100%;
     }
 
-    .article-page {
+    .article-page,
+    .article-cover,
+    .article-body,
+    .article-body img {
         width: 100%;
     }
-
-    .article-cover {
-        width: 100%;
-    }
-
-    .article-body {
-        width: 100%;
-    }
-
-        .article-body img {
-            width: 100%;
-        }
 
     .guide-steps {
         width: 100%;
@@ -954,10 +947,8 @@ h4 {
     }
 }
 
-/* --- Адаптив: мобильные / узкие планшеты --- */
-
+/* ---------- Мобильные ---------- */
 @media (max-width: 900px) {
-    /* Шапка */
     .header {
         height: auto;
         flex-direction: column;
@@ -975,24 +966,20 @@ h4 {
         display: none;
     }
 
-    /* Hero */
     .hero {
         height: auto;
         flex-direction: column;
         padding: 20px 0 30px;
     }
 
-    .hero-copy {
-        width: 100%;
-    }
+        .hero-copy,
+        .hero p {
+            width: 100%;
+        }
 
-    .hero h2 {
-        font-size: 30px;
-    }
-
-    .hero p {
-        width: 100%;
-    }
+        .hero h2 {
+            font-size: 30px;
+        }
 
     .hero-button {
         width: 100%;
@@ -1013,7 +1000,6 @@ h4 {
         .hero-players img {
             position: static;
             width: 100%;
-            height: auto;
         }
 
     .hero-back {
@@ -1031,7 +1017,6 @@ h4 {
         z-index: 1;
     }
 
-    /* Магазин */
     .store-body {
         flex-direction: column;
     }
@@ -1055,17 +1040,14 @@ h4 {
             width: 100%;
         }
 
-    /* Новости */
     .news-grid {
         grid-template-columns: 1fr;
     }
 
-    /* О нас */
     .about {
         padding: 20px;
     }
 
-    /* Футер */
     .footer {
         flex-direction: column;
         gap: 20px;
@@ -1077,7 +1059,6 @@ h4 {
         flex-wrap: wrap;
     }
 
-    /* Награды */
     .rewards-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1096,7 +1077,6 @@ h4 {
             width: 120px;
         }
 
-    /* Руководство */
     .guide-layout {
         flex-direction: column;
         gap: 25px;
@@ -1109,7 +1089,6 @@ h4 {
         margin: 0 auto;
     }
 
-    /* Широкий баннер новостей */
     .news-wide {
         flex-direction: column;
         padding: 20px;
@@ -1123,21 +1102,17 @@ h4 {
             max-height: none;
         }
 
-    /* Статья */
     .article-bottom {
         flex-direction: column;
         gap: 12px;
     }
 
-    /* Тост */
     .toast {
         left: 16px;
         right: 16px;
         text-align: center;
     }
 }
-
-/* --- Адаптив: совсем узкие экраны --- */
 
 @media (max-width: 600px) {
     .logo span {
